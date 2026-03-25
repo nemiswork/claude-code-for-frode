@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome, Frode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0c10;
+            --bg-card: #12151c;
+            --bg-elevated: #1a1e28;
+            --accent: #c8a86e;
+            --accent-glow: rgba(200, 168, 110, 0.15);
+            --accent-dim: #8a7348;
+            --text-primary: #e8e4dc;
+            --text-secondary: #9a9590;
+            --text-muted: #5a5550;
+            --terminal-green: #7ec87e;
+            --terminal-bg: #0d1117;
+            --border: rgba(200, 168, 110, 0.12);
+            --gradient-gold: linear-gradient(135deg, #c8a86e 0%, #e8d5a8 50%, #c8a86e 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-dim) var(--bg-deep);
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'Source Sans 3', sans-serif;
+            font-weight: 300;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ═══ Noise overlay ═══ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ═══ Hero ═══ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 300;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeUp 1s 0.3s ease forwards;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 400;
+            line-height: 1.05;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeUp 1s 0.6s ease forwards;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 520px;
+            margin-top: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 1s 0.9s ease forwards;
+        }
+
+        .hero-cta {
+            margin-top: 3rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeUp 1s 1.2s ease forwards;
+        }
+
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 1rem 2.5rem;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            color: var(--bg-deep);
+        }
+
+        .btn:hover::before {
+            transform: scaleX(1);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-deep);
+        }
+
+        .btn-primary::before {
+            background: var(--text-primary);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: fadeUp 1s 1.8s ease forwards;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            margin: 0 auto;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* ═══ Sections ═══ */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 300;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--accent-dim);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: var(--accent);
+            margin: 6rem auto;
+        }
+
+        /* ═══ Letter section ═══ */
+        .letter {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 4rem 0;
+        }
+
+        .letter p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .letter p:first-of-type::first-letter {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.5rem;
+            margin-top: 0.15rem;
+            color: var(--accent);
+        }
+
+        .letter .signature {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-top: 2.5rem;
+        }
+
+        /* ═══ What section ═══ */
+        .capabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .cap-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 2.5rem 2rem;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .cap-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.4s ease;
+        }
+
+        .cap-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-dim);
+        }
+
+        .cap-card:hover::after {
+            width: 100%;
+        }
+
+        .cap-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .cap-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ═══ Terminal demo ═══ */
+        .terminal-window {
+            background: var(--terminal-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 3rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .terminal-header {
+            background: var(--bg-elevated);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28c840; }
+
+        .terminal-title {
+            margin-left: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .terminal-body .prompt {
+            color: var(--terminal-green);
+        }
+
+        .terminal-body .command {
+            color: var(--text-primary);
+        }
+
+        .terminal-body .output {
+            color: var(--text-secondary);
+        }
+
+        .terminal-body .comment {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--terminal-green);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+
+        /* ═══ Steps ═══ */
+        .steps {
+            display: grid;
+            gap: 0;
+            margin-top: 3rem;
+            counter-reset: step;
+        }
+
+        .step {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 2rem;
+            padding: 2.5rem 0;
+            border-bottom: 1px solid var(--border);
+            counter-increment: step;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--accent);
+            line-height: 1;
+            opacity: 0.4;
+        }
+
+        .step-number::before {
+            content: counter(step, decimal-leading-zero);
+        }
+
+        .step h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .step p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .step code {
+            display: inline-block;
+            background: var(--terminal-bg);
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--terminal-green);
+            margin-top: 0.5rem;
+        }
+
+        /* ═══ Examples grid ═══ */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            margin-top: 3rem;
+        }
+
+        .example-cell {
+            background: var(--bg-deep);
+            padding: 2.5rem 2rem;
+            transition: background 0.3s ease;
+        }
+
+        .example-cell:hover {
+            background: var(--bg-card);
+        }
+
+        .example-cell .number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--accent);
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .example-cell h4 {
+            font-family: 'Source Sans 3', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .example-cell p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ═══ Conspiracy banner ═══ */
+        .conspiracy-banner {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 4rem 0;
+        }
+
+        .conspiracy-banner p {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 2;
+        }
+
+        .conspiracy-banner .redacted {
+            background: var(--text-muted);
+            color: var(--text-muted);
+            padding: 0.1rem 0.3rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .conspiracy-banner .redacted:hover {
+            background: transparent;
+            color: var(--accent);
+        }
+
+        /* ═══ Footer ═══ */
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer .credits {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            opacity: 0.5;
+            margin-top: 2rem;
+        }
+
+        /* ═══ Animations ═══ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══ Responsive ═══ */
+        @media (max-width: 768px) {
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                grid-template-columns: 50px 1fr;
+                gap: 1rem;
+            }
+
+            .step-number {
+                font-size: 2rem;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HERO ═══ -->
+    <div class="hero">
+        <div class="hero-label">A personal introduction</div>
+        <h1 class="hero-title">Welcome, <em>Frode</em></h1>
+        <p class="hero-subtitle">
+            You've been handed the keys to something extraordinary.
+            This is your guide to Claude Code — built specifically for you.
+        </p>
+        <div class="hero-cta">
+            <a href="https://github.com/nemiswork/claude-code-for-frode" class="btn btn-primary" target="_blank">Open the Guide</a>
+            <a href="#start" class="btn">Get Started</a>
+        </div>
+        <div class="scroll-indicator"><span></span></div>
+    </div>
+
+    <!-- ═══ LETTER ═══ -->
+    <div class="divider"></div>
+
+    <section class="letter fade-in">
+        <div class="section-label">From Simen</div>
+        <p>Gratulerer, Frode. You're about to discover what happens when an AI stops being a chatbot and starts being a colleague. Claude Code isn't another chat window — it lives in your terminal, reads your files, writes code, analyzes data, and builds things. Real things.</p>
+        <p>I know what you're thinking. <em>"Terminal? I'm the Head of Department at Biomedicine, not a systems engineer."</em> That's exactly the point. You don't need to know how to code. You tell Claude what you want — in plain language — and it handles the rest. Literature reviews. Data analysis. Grant drafts. Even entire web applications.</p>
+        <p>I built this guide specifically for you. Not for a generic user. For you — the proteomics professor with 80+ publications and 5,500 citations. The PROBE platform leader. The man who somehow won Havfisker'n 2025 (still suspicious, by the way).</p>
+        <p>And no, this technology is not part of a shadow government surveillance program. Probably.</p>
+        <div class="signature">— Simen</div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══ WHAT IS IT ═══ -->
+    <section class="fade-in">
+        <div class="section-label">What you're getting</div>
+        <h2 class="section-title">An AI that works <em>with</em> your files,<br>not just talks <em>about</em> them</h2>
+
+        <div class="capabilities">
+            <div class="cap-card fade-in">
+                <h3>Research & Literature</h3>
+                <p>Search PubMed, analyze papers, draft methods sections, write reviewer responses. Like a postdoc who's read everything — and actually remembers it.</p>
+            </div>
+            <div class="cap-card fade-in">
+                <h3>Data Analysis</h3>
+                <p>Load your proteomics CSVs, run statistics, create volcano plots, PCA, heatmaps. Point it at a MaxQuant output and watch it work.</p>
+            </div>
+            <div class="cap-card fade-in">
+                <h3>Academic Writing</h3>
+                <p>Abstracts, grant applications, faculty communications, recommendation letters. Adapts tone from NFR formal to collegial email.</p>
+            </div>
+            <div class="cap-card fade-in">
+                <h3>Build Tools</h3>
+                <p>Describe what you need in plain language. A lab inventory system, a data dashboard, a research group website. Claude builds it.</p>
+            </div>
+            <div class="cap-card fade-in">
+                <h3>Administration</h3>
+                <p>Budget summaries, committee reports, meeting prep, department communications. The parts of being Head of Department that nobody warns you about.</p>
+            </div>
+            <div class="cap-card fade-in">
+                <h3>Teaching</h3>
+                <p>Exam questions from learning objectives, course materials, assessment rubrics. Turn your expertise into structured content.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ TERMINAL DEMO ═══ -->
+    <section class="fade-in">
+        <div class="section-label">This is what it looks like</div>
+        <h2 class="section-title">Your terminal. Your data. Real results.</h2>
+
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+                <div class="terminal-title">Terminal — claude</div>
+            </div>
+            <div class="terminal-body">
+                <div><span class="prompt">frode@mac ~</span> <span class="command">claude</span></div>
+                <br>
+                <div><span class="output">Claude Code v1.0 — Welcome, Frode.</span></div>
+                <br>
+                <div><span class="prompt">></span> <span class="command">Read my proteomics dataset and find the top differentially</span></div>
+                <div><span class="command">&nbsp; expressed proteins between Alzheimer's and control CSF samples</span></div>
+                <br>
+                <div><span class="comment"># Claude reads the file, writes a Python script, runs it...</span></div>
+                <br>
+                <div><span class="output">Found 30 proteins. Top hits by fold change:</span></div>
+                <div><span class="output">&nbsp; 1. SMOC1 — log2FC: 2.08, adj.p: 0.0003</span></div>
+                <div><span class="output">&nbsp; 2. CHI3L1 — log2FC: 1.68, adj.p: 0.0008</span></div>
+                <div><span class="output">&nbsp; 3. C3 — log2FC: 1.65, adj.p: 0.001</span></div>
+                <div><span class="output">&nbsp; Volcano plot saved to output/volcano.png</span></div>
+                <br>
+                <div><span class="prompt">></span> <span class="cursor"></span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══ GET STARTED ═══ -->
+    <section id="start" class="fade-in">
+        <div class="section-label">Getting started</div>
+        <h2 class="section-title">Four steps. Ten minutes.</h2>
+
+        <div class="steps">
+            <div class="step fade-in">
+                <div class="step-number"></div>
+                <div>
+                    <h3>Open Terminal</h3>
+                    <p>Press Cmd + Space, type "Terminal", hit Enter. That's the hardest part, genuinely.</p>
+                </div>
+            </div>
+            <div class="step fade-in">
+                <div class="step-number"></div>
+                <div>
+                    <h3>Install Claude Code</h3>
+                    <p>One command. Copy-paste it. Done.</p>
+                    <code>npm install -g @anthropic-ai/claude-code</code>
+                </div>
+            </div>
+            <div class="step fade-in">
+                <div class="step-number"></div>
+                <div>
+                    <h3>Clone Your Guide</h3>
+                    <p>This pulls down your personalized repo with examples, sample data, and pre-configured settings.</p>
+                    <code>git clone https://github.com/nemiswork/claude-code-for-frode.git</code>
+                </div>
+            </div>
+            <div class="step fade-in">
+                <div class="step-number"></div>
+                <div>
+                    <h3>Launch</h3>
+                    <p>Navigate into the folder and start Claude. It already knows who you are.</p>
+                    <code>cd claude-code-for-frode && claude</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ═══ EXAMPLES ═══ -->
+    <section class="fade-in">
+        <div class="section-label">What's inside</div>
+        <h2 class="section-title">Six guided exercises</h2>
+
+        <div class="examples-grid">
+            <div class="example-cell fade-in">
+                <div class="number">01</div>
+                <h4>First Conversation</h4>
+                <p>Read files, ask questions, run code. The basics in 10 minutes.</p>
+            </div>
+            <div class="example-cell fade-in">
+                <div class="number">02</div>
+                <h4>Research Assistant</h4>
+                <p>Literature search, manuscript drafts, grant writing.</p>
+            </div>
+            <div class="example-cell fade-in">
+                <div class="number">03</div>
+                <h4>Data Analysis</h4>
+                <p>Proteomics datasets, volcano plots, differential expression.</p>
+            </div>
+            <div class="example-cell fade-in">
+                <div class="number">04</div>
+                <h4>Writing Partner</h4>
+                <p>Abstracts, admin emails, peer reviews, recommendations.</p>
+            </div>
+            <div class="example-cell fade-in">
+                <div class="number">05</div>
+                <h4>Build Something</h4>
+                <p>Create a working web app. No coding required. Seriously.</p>
+            </div>
+            <div class="example-cell fade-in">
+                <div class="number">06</div>
+                <h4>Advanced Tricks</h4>
+                <p>Skills, agents, plan mode, MCP. The deep end.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ CONSPIRACY BANNER ═══ -->
+    <div class="conspiracy-banner fade-in">
+        <p>
+            CLASSIFIED BRIEFING — CLEARANCE LEVEL: <span class="redacted">HAVFISKER</span><br>
+            Subject: Claude Code deployment to <span class="redacted">FRODE BERVEN</span><br>
+            Status: ACTIVE &mdash; No connection to <span class="redacted">Illuminati</span>, <span class="redacted">Big Pharma</span>, or <span class="redacted">Havfisker'n scoring committee</span><br>
+            Note: All conspiracy theories remain the sole intellectual property of the subject<br>
+            <br>
+            <em style="color: var(--accent-dim);">[ hover the redacted text — if you dare ]</em>
+        </p>
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <p style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 1rem;">Tight lines and good commits.</p>
+        <p>Built with Claude Code, obviously. By Simen Vikdal.</p>
+        <p>For Frode Berven — Head of Biomedicine, UiB. Havfisker'n 2025 Champion.<br>Professor, scientist, and relentless investigator of truths both scientific and... otherwise.</p>
+        <div class="credits">MMXXVI — VIKDAL.NO</div>
+    </div>
+
+    <!-- ═══ Scroll animation ═══ -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>
