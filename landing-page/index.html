@@ -670,7 +670,7 @@
     <!-- ═══ GET STARTED ═══ -->
     <section id="start" class="fade-in">
         <div class="section-label">Getting started</div>
-        <h2 class="section-title">Four steps. Ten minutes.</h2>
+        <h2 class="section-title">Five steps. Fifteen minutes.</h2>
 
         <div class="steps">
             <div class="step fade-in">
@@ -683,8 +683,18 @@
             <div class="step fade-in">
                 <div class="step-number"></div>
                 <div>
+                    <h3>Install Homebrew & Node.js</h3>
+                    <p>Your Mac needs these tools first. Homebrew is a package manager, Node.js runs JavaScript. Copy-paste each line, one at a time.</p>
+                    <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+                    <p style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--accent-dim);">After Homebrew installs, it will show two commands starting with <span style="color: var(--terminal-green);">eval</span> — run both of them. Then:</p>
+                    <code>brew install node</code>
+                </div>
+            </div>
+            <div class="step fade-in">
+                <div class="step-number"></div>
+                <div>
                     <h3>Install Claude Code</h3>
-                    <p>One command. Copy-paste it. Done.</p>
+                    <p>Now that Node.js is installed, one command gets you Claude Code.</p>
                     <code>npm install -g @anthropic-ai/claude-code</code>
                 </div>
             </div>
